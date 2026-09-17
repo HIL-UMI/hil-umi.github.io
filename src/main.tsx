@@ -2,6 +2,8 @@ import { StrictMode, useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import './styles.css';
 
+const assetUrl = (path: string) => `${import.meta.env.BASE_URL}${path.replace(/^\//, '')}`;
+
 const authors = [
   ['Zimu Han', '*1,2'],
   ['Yiming Zeng', '*1,2'],
@@ -200,7 +202,7 @@ function App() {
           </div>
 
           <figure className="hero-figure">
-            <img src="/assets/teaser.webp" alt="HIL-UMI replaces inefficient real-robot intervention with policy-guided robot-free collection and reaches near-perfect task progress" />
+            <img src={assetUrl('/assets/teaser.webp')} alt="HIL-UMI replaces inefficient real-robot intervention with policy-guided robot-free collection and reaches near-perfect task progress" />
           </figure>
 
           <div className="hero-stat-row" aria-label="Research highlights">
@@ -245,7 +247,7 @@ function App() {
           <SectionHeading kicker="METHOD" title="A closed loop that never leaves the human hand." description="Two online detectors focus collection; two alternating updates turn targeted demonstrations into a stronger policy." />
           <figure className="media-panel framework-panel reveal">
             <div className="panel-topline"><span>HIL-UMI PIPELINE</span><span className="live-indicator"><i /> POLICY-GUIDED LOOP</span></div>
-            <img src="/assets/framework.webp" alt="HIL-UMI pipeline with online collection, policy and advantage OOD detectors, advantage update, and AWBC policy update" />
+            <img src={assetUrl('/assets/framework.webp')} alt="HIL-UMI pipeline with online collection, policy and advantage OOD detectors, advantage update, and AWBC policy update" />
             <figcaption>Overview of the alternating HIL-UMI collection and post-training pipeline.</figcaption>
           </figure>
 
@@ -274,7 +276,7 @@ function App() {
           <SectionHeading kicker="HARDWARE" title="Portable collection. Real-time intelligence." description="A custom handheld UMI captures robot-compatible observations and actions at 30 Hz while local GPU inference powers both online detectors." />
           <figure className="media-panel hardware-figure reveal">
             <div className="panel-topline"><span>CUSTOM UMI DEVICE</span><span>ROBOT-FREE · 30 HZ</span></div>
-            <img src="/assets/hardware.webp" alt="Custom HIL-UMI hardware with Quest controller and headset, RealSense cameras, connector, and AgiBot OmniPicker" />
+            <img src={assetUrl('/assets/hardware.webp')} alt="Custom HIL-UMI hardware with Quest controller and headset, RealSense cameras, connector, and AgiBot OmniPicker" />
           </figure>
 
           <div className="hardware-list reveal">
@@ -300,7 +302,7 @@ function App() {
             {tasks.map((task, index) => (
               <article className="task-card reveal" key={task.name}>
                 <div className="task-visual">
-                  <img src={task.image} alt={`${task.name} robot manipulation sequence`} />
+                  <img src={assetUrl(task.image)} alt={`${task.name} robot manipulation sequence`} />
                   <div className="video-placeholder" aria-label={`${task.name} video coming soon`}>
                     <span className="play-mark" aria-hidden="true">▶</span>
                     <span>VIDEO COMING SOON</span>
@@ -331,7 +333,7 @@ function App() {
 
           <figure className="results-figure reveal">
             <div className="panel-topline"><span>POST-TRAINING PROGRESSION</span><span>MEAN OF 10 TRIALS · EACH CHECKPOINT</span></div>
-            <div className="results-image-wrap"><img src="/assets/results-overview.webp" alt="Task Progress Score across post-training rounds for SFT, HIL-UMI without advantage, and full HIL-UMI on four tasks and their average" /></div>
+            <div className="results-image-wrap"><img src={assetUrl('/assets/results-overview.webp')} alt="Task Progress Score across post-training rounds for SFT, HIL-UMI without advantage, and full HIL-UMI on four tasks and their average" /></div>
             <figcaption>Full HIL-UMI produces sustained gains across every evaluated task; removing advantage weighting leads to a clear performance drop.</figcaption>
           </figure>
 
