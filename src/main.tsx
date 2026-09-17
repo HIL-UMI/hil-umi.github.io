@@ -188,11 +188,17 @@ function App() {
             {authors.map(([name, affiliation]) => <span className="author" key={name}>{name}<sup>{affiliation}</sup></span>)}
           </div>
           <div className="affiliations">
-            <span><sup>1</sup> Center on Frontier Computing Studies, School of Computer Science, Peking University, China</span>
-            <span><sup>2</sup> National Key Laboratory for Multimedia Information Processing, School of Computer Science, Peking University, China</span>
-            <span><sup>3</sup> PrimeBot, China</span>
-            <span><sup>4</sup> Xi&apos;an Jiaotong University, China</span>
-            <span><sup>5</sup> JD Technology, China</span>
+            <div className="affiliation-row">
+              <span><sup>1</sup> Center on Frontier Computing Studies, School of Computer Science, Peking University</span>
+            </div>
+            <div className="affiliation-row">
+              <span><sup>2</sup> National Key Laboratory for Multimedia Information Processing, School of Computer Science, Peking University</span>
+            </div>
+            <div className="affiliation-row affiliation-row-compact">
+              <span><sup>3</sup> PrimeBot</span>
+              <span><sup>4</sup> Xi&apos;an Jiaotong University</span>
+              <span><sup>5</sup> JD Technology</span>
+            </div>
           </div>
           <div className="equal-note" aria-label="Author notes">
             <span><sup>*</sup> Equal contribution.</span>
