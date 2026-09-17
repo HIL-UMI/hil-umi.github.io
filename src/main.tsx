@@ -207,7 +207,7 @@ function App() {
           </div>
 
           <div className="hero-actions" aria-label="Project links">
-            <span className="button button-primary" aria-disabled="true">Paper <small>Coming soon</small></span>
+            <a className="button button-primary" href={assetUrl('/static/HIL-UMI-ArXiv.pdf')} target="_blank" rel="noreferrer">Paper <small>PDF</small></a>
             <span className="button button-secondary" aria-disabled="true">Code <small>Coming soon</small></span>
           </div>
 
