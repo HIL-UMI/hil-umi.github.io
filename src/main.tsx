@@ -5,18 +5,18 @@ import './styles.css';
 const assetUrl = (path: string) => `${import.meta.env.BASE_URL}${path.replace(/^\//, '')}`;
 
 const authors = [
-  ['Zimu Han', '*1,2'],
-  ['Yiming Zeng', '*1,2'],
-  ['Jiyao Zhang', '*1'],
-  ['Zihao Zhao', '3'],
-  ['Yuanfei Wang', '1'],
-  ['Yixiang Jin', '4'],
-  ['Shiqi Li', '4'],
+  ['Zimu Han', '*1,4'],
+  ['Yiming Zeng', '*1,4'],
+  ['Jiyao Zhang', '*‡1,2,3'],
+  ['Zihao Zhao', '1'],
+  ['Yuanfei Wang', '1,2,3'],
+  ['Yixiang Jin', '5'],
+  ['Shiqi Li', '5'],
   ['Shuangben Chen', '1'],
-  ['Wei Huang', '5'],
-  ['Ruodai Li', '4'],
-  ['Hui Shen', '4'],
-  ['Hao Dong', '1'],
+  ['Wei Huang', '1'],
+  ['Ruodai Li', '5'],
+  ['Hui Shen', '5'],
+  ['Hao Dong', '†1,2,3'],
 ];
 
 const navItems = [
@@ -188,13 +188,17 @@ function App() {
             {authors.map(([name, affiliation]) => <span className="author" key={name}>{name}<sup>{affiliation}</sup></span>)}
           </div>
           <div className="affiliations">
-            <span><sup>1</sup> Peking University</span>
-            <span><sup>2</sup> Xi&apos;an Jiaotong University</span>
-            <span><sup>3</sup> Imperial College London</span>
-            <span><sup>4</sup> JD Tech</span>
-            <span><sup>5</sup> Beihang University</span>
+            <span><sup>1</sup> Center on Frontier Computing Studies, School of Computer Science, Peking University, China</span>
+            <span><sup>2</sup> National Key Laboratory for Multimedia Information Processing, School of Computer Science, Peking University, China</span>
+            <span><sup>3</sup> PrimeBot, China</span>
+            <span><sup>4</sup> Xi&apos;an Jiaotong University, China</span>
+            <span><sup>5</sup> JD Technology, China</span>
           </div>
-          <p className="equal-note"><sup>*</sup> Equal contribution</p>
+          <div className="equal-note" aria-label="Author notes">
+            <span><sup>*</sup> Equal contribution.</span>
+            <span><sup>‡</sup> Project lead.</span>
+            <span><sup>†</sup> Corresponding author. Correspondence to <a href="mailto:hao.dong@pku.edu.cn">hao.dong@pku.edu.cn</a>.</span>
+          </div>
 
           <div className="hero-actions" aria-label="Project links">
             <span className="button button-primary" aria-disabled="true">Paper <small>Coming soon</small></span>
