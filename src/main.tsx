@@ -5,6 +5,7 @@ import './styles.css';
 const assetUrl = (path: string) => `${import.meta.env.BASE_URL}${path.replace(/^\//, '')}`;
 
 const arxivUrl = 'https://arxiv.org/abs/2609.20659';
+const videoPlaybackRate = 2;
 
 const bibtex = `@article{han2026hilumi,
   title={HIL-UMI: Bringing Human-in-the-Loop Post-Training of Vision-Language-Action Models to Universal Manipulation Interface},
@@ -180,7 +181,10 @@ function VideoComparison({ taskName, videos }: { taskName: string; videos: Compa
 
   const playVideos = () => {
     videoRefs.current.forEach((video) => {
-      if (video && !video.ended) void video.play().catch(() => undefined);
+      if (video && !video.ended) {
+        video.playbackRate = videoPlaybackRate;
+        void video.play().catch(() => undefined);
+      }
     });
   };
 
@@ -240,13 +244,25 @@ function VideoComparison({ taskName, videos }: { taskName: string; videos: Compa
         {videos.map((video, index) => (
           <div className="comparison-video" key={video.label}>
             <video
-              ref={(element) => { videoRefs.current[index] = element; }}
+              ref={(element) => {
+                videoRefs.current[index] = element;
+                if (element) {
+                  element.defaultPlaybackRate = videoPlaybackRate;
+                  element.playbackRate = videoPlaybackRate;
+                }
+              }}
               src={assetUrl(video.src)}
               poster={assetUrl(video.poster)}
               muted
               playsInline
               preload="metadata"
               aria-label={`${taskName} — ${video.label} result`}
+              onLoadedMetadata={(event) => { event.currentTarget.playbackRate = videoPlaybackRate; }}
+              onRateChange={(event) => {
+                if (event.currentTarget.playbackRate !== videoPlaybackRate) {
+                  event.currentTarget.playbackRate = videoPlaybackRate;
+                }
+              }}
               onEnded={() => handleEnded(index)}
               onError={() => handleError(index)}
             />
