@@ -199,10 +199,11 @@ blockquote { margin: 25px 0 32px; color: #162035; font-size: 24px; line-height: 
 
 .citation-section { background: #fff; }
 .citation-wrap { display: grid; grid-template-columns: .8fr 1.2fr; gap: 80px; align-items: center; }
+.citation-copy a { color: #278d96; font-weight: 680; text-decoration: underline; text-underline-offset: 3px; }
 .citation-card { position: relative; padding: 24px; border: 1px solid var(--line); border-radius: 20px; background: #f4f7fa; overflow: hidden; }
 .citation-card-top { display: flex; justify-content: space-between; padding-bottom: 18px; border-bottom: 1px solid var(--line); color: #6c7788; font: 700 9px/1 ui-monospace, monospace; letter-spacing: .1em; }
-.citation-card code { display: block; padding: 25px 0 12px; color: #586274; font: 12px/1.7 ui-monospace, SFMono-Regular, Menlo, monospace; }
-.citation-mask { position: absolute; inset: auto 0 0; padding: 38px 24px 23px; background: linear-gradient(transparent, #f4f7fa 44%); color: #677384; font: 700 9px/1 ui-monospace, monospace; letter-spacing: .08em; text-align: center; text-transform: uppercase; }
+.citation-card pre { margin: 0; }
+.citation-card code { display: block; padding: 25px 0 12px; color: #586274; font: 12px/1.7 ui-monospace, SFMono-Regular, Menlo, monospace; overflow-wrap: anywhere; white-space: pre-wrap; }
 footer { padding: 30px 0; border-top: 1px solid var(--line); background: #fff; }
 .footer-inner { display: flex; align-items: center; justify-content: space-between; color: #768090; font-size: 11px; }
 .footer-brand { display: flex; align-items: center; gap: 9px; color: var(--ink); font-weight: 780; }

@@ -4,6 +4,18 @@ import './styles.css';
 
 const assetUrl = (path: string) => `${import.meta.env.BASE_URL}${path.replace(/^\//, '')}`;
 
+const arxivUrl = 'https://arxiv.org/abs/2609.20659';
+
+const bibtex = `@article{han2026hilumi,
+  title={HIL-UMI: Bringing Human-in-the-Loop Post-Training of Vision-Language-Action Models to Universal Manipulation Interface},
+  author={Han, Zimu and Zeng, Yiming and Zhang, Jiyao and Zhao, Zihao and Wang, Yuanfei and Jin, Yixiang and Li, Shiqi and Chen, Shuangben and Huang, Wei and Li, Ruodai and Shen, Hui and Dong, Hao},
+  journal={arXiv preprint arXiv:2609.20659},
+  year={2026},
+  eprint={2609.20659},
+  archivePrefix={arXiv},
+  primaryClass={cs.RO}
+}`;
+
 const authors = [
   ['Zimu Han', '*1,4'],
   ['Yiming Zeng', '*1,4'],
@@ -207,7 +219,7 @@ function App() {
           </div>
 
           <div className="hero-actions" aria-label="Project links">
-            <a className="button button-primary" href={assetUrl('/static/HIL-UMI-ArXiv.pdf')} target="_blank" rel="noreferrer">Paper <small>PDF</small></a>
+            <a className="button button-primary" href={arxivUrl} target="_blank" rel="noreferrer">Paper <small>arXiv</small></a>
             <span className="button button-secondary" aria-disabled="true">Code <small>Coming soon</small></span>
           </div>
 
@@ -362,12 +374,11 @@ function App() {
           <div>
             <p className="section-kicker"><span />CITATION</p>
             <h2>Build on HIL-UMI.</h2>
-            <p>Paper metadata and the official BibTeX entry will be added with the public release.</p>
+            <p className="citation-copy">For the latest version and citation metadata, see <a href={arxivUrl} target="_blank" rel="noreferrer">arXiv:2609.20659</a>.</p>
           </div>
           <div className="citation-card">
-            <div className="citation-card-top"><span>BIBTEX</span><span>COMING SOON</span></div>
-            <code>@article{'{'}han2026hilumi,<br />&nbsp;&nbsp;title={'{'}HIL-UMI: ...{'}'},<br />&nbsp;&nbsp;author={'{'}Han, Zimu and others{'}'},<br />&nbsp;&nbsp;year={'{'}2026{'}'}<br />{'}'}</code>
-            <div className="citation-mask">Official citation pending paper release</div>
+            <div className="citation-card-top"><span>BIBTEX</span><span>ARXIV:2609.20659</span></div>
+            <pre><code>{bibtex}</code></pre>
           </div>
         </div>
       </section>
