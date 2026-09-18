@@ -1,4 +1,4 @@
-import { StrictMode, useEffect, useState } from 'react';
+import { StrictMode, useEffect, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import './styles.css';
 
@@ -86,25 +86,37 @@ const tasks = [
   {
     name: 'Fold Towel',
     kind: 'Long-horizon · Deformable',
-    image: '/assets/fold-towel.webp',
+    videos: [
+      { label: 'SFT', src: '/videos/fold-towel-sft.mp4', poster: '/assets/video-posters/fold-towel-sft.webp' },
+      { label: 'HIL-UMI', src: '/videos/fold-towel-hil-umi.mp4', poster: '/assets/video-posters/fold-towel-hil-umi.webp' },
+    ],
     text: 'Flatten a randomly initialized towel, complete two folds while removing wrinkles, and place it in a basket.',
   },
   {
     name: 'Clean Up Table',
     kind: 'Long-horizon · Housework',
-    image: '/assets/clean-up-table.webp',
+    videos: [
+      { label: 'SFT', src: '/videos/clean-up-table-sft.mp4', poster: '/assets/video-posters/clean-up-table-sft.webp' },
+      { label: 'HIL-UMI', src: '/videos/clean-up-table-hil-umi.mp4', poster: '/assets/video-posters/clean-up-table-hil-umi.webp' },
+    ],
     text: 'Sort three pens into color-matched slots, store three toys, and correctly operate two drawers.',
   },
   {
     name: 'Stack Cube',
     kind: 'Precision · Spatial',
-    image: '/assets/stack-cube.webp',
+    videos: [
+      { label: 'SFT', src: '/videos/stack-cube-sft.mp4', poster: '/assets/video-posters/stack-cube-sft.webp' },
+      { label: 'HIL-UMI', src: '/videos/stack-cube-hil-umi.mp4', poster: '/assets/video-posters/stack-cube-hil-umi.webp' },
+    ],
     text: 'Grasp a purple cube and place it precisely on top of a red target cube under varied initial layouts.',
   },
   {
     name: 'Stamp',
     kind: 'Precision · Alignment',
-    image: '/assets/stamp.webp',
+    videos: [
+      { label: 'SFT', src: '/videos/stamp-sft.mp4', poster: '/assets/video-posters/stamp-sft.webp' },
+      { label: 'HIL-UMI', src: '/videos/stamp-hil-umi.mp4', poster: '/assets/video-posters/stamp-hil-umi.webp' },
+    ],
     text: 'Grasp and orient a stamp, then place it fully inside a tightly constrained marked target box.',
   },
 ];
@@ -148,6 +160,106 @@ function SectionHeading({ kicker, title, description, light = false }: { kicker:
       <h2>{title}</h2>
       {description && <p>{description}</p>}
     </header>
+  );
+}
+
+type ComparisonVideo = {
+  label: string;
+  src: string;
+  poster: string;
+};
+
+function VideoComparison({ taskName, videos }: { taskName: string; videos: ComparisonVideo[] }) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const videoRefs = useRef<Array<HTMLVideoElement | null>>([]);
+  const endedVideos = useRef(new Set<number>());
+  const isInView = useRef(false);
+  const [isPaused, setIsPaused] = useState(() => window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  const isPausedRef = useRef(isPaused);
+  const [errors, setErrors] = useState<Record<number, boolean>>({});
+
+  const playVideos = () => {
+    videoRefs.current.forEach((video) => {
+      if (video && !video.ended) void video.play().catch(() => undefined);
+    });
+  };
+
+  const pauseVideos = () => {
+    videoRefs.current.forEach((video) => video?.pause());
+  };
+
+  useEffect(() => {
+    isPausedRef.current = isPaused;
+  }, [isPaused]);
+
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container || !('IntersectionObserver' in window)) {
+      isInView.current = true;
+      if (!isPausedRef.current) playVideos();
+      return;
+    }
+
+    const observer = new IntersectionObserver(([entry]) => {
+      isInView.current = entry.isIntersecting;
+      if (entry.isIntersecting && !isPausedRef.current) playVideos();
+      else pauseVideos();
+    }, { threshold: 0.3 });
+
+    observer.observe(container);
+    return () => observer.disconnect();
+  }, []);
+
+  const togglePlayback = () => {
+    const nextPaused = !isPaused;
+    setIsPaused(nextPaused);
+    isPausedRef.current = nextPaused;
+    if (nextPaused) pauseVideos();
+    else playVideos();
+  };
+
+  const handleEnded = (index: number) => {
+    endedVideos.current.add(index);
+    if (endedVideos.current.size !== videos.length) return;
+
+    videoRefs.current.forEach((video) => {
+      if (video) video.currentTime = 0;
+    });
+    endedVideos.current.clear();
+    if (isInView.current && !isPausedRef.current) playVideos();
+  };
+
+  const handleError = (index: number) => {
+    setErrors((current) => ({ ...current, [index]: true }));
+    handleEnded(index);
+  };
+
+  return (
+    <div className="task-visual" ref={containerRef}>
+      <div className="comparison-video-grid">
+        {videos.map((video, index) => (
+          <div className="comparison-video" key={video.label}>
+            <video
+              ref={(element) => { videoRefs.current[index] = element; }}
+              src={assetUrl(video.src)}
+              poster={assetUrl(video.poster)}
+              muted
+              playsInline
+              preload="metadata"
+              aria-label={`${taskName} — ${video.label} result`}
+              onEnded={() => handleEnded(index)}
+              onError={() => handleError(index)}
+            />
+            <span className={`video-method-label ${video.label === 'HIL-UMI' ? 'video-method-label-primary' : ''}`}>{video.label}</span>
+            {errors[index] && <span className="video-error" role="status">Video unavailable</span>}
+          </div>
+        ))}
+      </div>
+      <button className="comparison-playback" type="button" onClick={togglePlayback} aria-label={`${isPaused ? 'Play' : 'Pause'} ${taskName} comparison videos`}>
+        <span aria-hidden="true">{isPaused ? '▶' : 'Ⅱ'}</span>
+        {isPaused ? 'Play comparison' : 'Pause comparison'}
+      </button>
+    </div>
   );
 }
 
@@ -338,12 +450,8 @@ function App() {
           <div className="task-grid">
             {tasks.map((task, index) => (
               <article className="task-card reveal" key={task.name}>
-                <div className="task-visual">
-                  <img src={assetUrl(task.image)} alt={`${task.name} robot manipulation sequence`} />
-                  <div className="video-placeholder" aria-label={`${task.name} video coming soon`}>
-                    <span className="play-mark" aria-hidden="true">▶</span>
-                    <span>VIDEO COMING SOON</span>
-                  </div>
+                <div className="task-media">
+                  <VideoComparison taskName={task.name} videos={task.videos} />
                   <span className="task-number">0{index + 1}</span>
                 </div>
                 <div className="task-content">
