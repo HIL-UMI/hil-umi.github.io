@@ -1,8 +1,5 @@
-import { StrictMode, useEffect, useRef, useState } from 'react';
+import { StrictMode, useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import * as THREE from 'three';
-import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import { USDLoader } from 'three/addons/loaders/USDLoader.js';
 import './styles.css';
 
 const assetUrl = (path: string) => `${import.meta.env.BASE_URL}${path.replace(/^\//, '')}`;
@@ -151,154 +148,6 @@ function SectionHeading({ kicker, title, description, light = false }: { kicker:
       <h2>{title}</h2>
       {description && <p>{description}</p>}
     </header>
-  );
-}
-
-function HardwareModelViewer() {
-  const mountRef = useRef<HTMLDivElement>(null);
-  const resetViewRef = useRef<() => void>(() => {});
-  const [loadState, setLoadState] = useState<'loading' | 'ready' | 'error'>('loading');
-  const [progress, setProgress] = useState(0);
-
-  useEffect(() => {
-    const mount = mountRef.current;
-    if (!mount) return;
-
-    let cancelled = false;
-    let frameId = 0;
-    let loadedModel: any = null;
-    let viewTargetY = 1.05;
-
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(34, 1, 0.01, 100);
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    renderer.outputColorSpace = THREE.SRGBColorSpace;
-    renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.05;
-    mount.appendChild(renderer.domElement);
-
-    const controls = new OrbitControls(camera, renderer.domElement);
-    controls.enableDamping = true;
-    controls.dampingFactor = 0.07;
-    controls.enablePan = false;
-    controls.minDistance = 2.2;
-    controls.maxDistance = 7;
-    controls.autoRotate = true;
-    controls.autoRotateSpeed = 0.55;
-
-    scene.add(new THREE.HemisphereLight(0xffffff, 0x62708a, 2.6));
-    const keyLight = new THREE.DirectionalLight(0xffffff, 3.2);
-    keyLight.position.set(4, 6, 5);
-    scene.add(keyLight);
-    const fillLight = new THREE.DirectionalLight(0x8ee9e4, 1.4);
-    fillLight.position.set(-4, 2, -3);
-    scene.add(fillLight);
-
-    const setDefaultView = () => {
-      controls.target.set(0, viewTargetY, 0);
-      camera.position.set(3.35, viewTargetY + 1.2, 3.7);
-      controls.update();
-    };
-    resetViewRef.current = setDefaultView;
-    setDefaultView();
-
-    const resize = () => {
-      const width = Math.max(mount.clientWidth, 1);
-      const height = Math.max(mount.clientHeight, 1);
-      camera.aspect = width / height;
-      camera.updateProjectionMatrix();
-      renderer.setSize(width, height, false);
-    };
-    const resizeObserver = new ResizeObserver(resize);
-    resizeObserver.observe(mount);
-    resize();
-
-    const loader = new USDLoader();
-    loader.load(
-      assetUrl('/assets/hardware.usdz'),
-      (model: any) => {
-        if (cancelled) return;
-        loadedModel = model;
-        const bounds = new THREE.Box3().setFromObject(model);
-        const size = bounds.getSize(new THREE.Vector3());
-        const center = bounds.getCenter(new THREE.Vector3());
-        const largestSide = Math.max(size.x, size.y, size.z) || 1;
-        const scale = 2.6 / largestSide;
-        model.position.sub(center);
-        model.scale.setScalar(scale);
-        const normalizedBounds = new THREE.Box3().setFromObject(model);
-        model.position.y -= normalizedBounds.min.y;
-        const finalBounds = new THREE.Box3().setFromObject(model);
-        viewTargetY = (finalBounds.min.y + finalBounds.max.y) / 2;
-        model.traverse((object: any) => {
-          if (object.isMesh) {
-            object.castShadow = true;
-            object.receiveShadow = true;
-          }
-        });
-        scene.add(model);
-        setDefaultView();
-        setLoadState('ready');
-      },
-      (event: ProgressEvent) => {
-        if (event.lengthComputable) setProgress(Math.round((event.loaded / event.total) * 100));
-      },
-      () => {
-        if (!cancelled) setLoadState('error');
-      },
-    );
-
-    const render = () => {
-      controls.update();
-      renderer.render(scene, camera);
-      frameId = window.requestAnimationFrame(render);
-    };
-    render();
-
-    return () => {
-      cancelled = true;
-      window.cancelAnimationFrame(frameId);
-      resizeObserver.disconnect();
-      controls.dispose();
-      if (loadedModel) {
-        loadedModel.traverse((object: any) => {
-          if (!object.isMesh) return;
-          object.geometry?.dispose();
-          const materials = Array.isArray(object.material) ? object.material : [object.material];
-          materials.forEach((material: any) => {
-            Object.values(material || {}).forEach((value: any) => {
-              if (value?.isTexture) value.dispose();
-            });
-            material?.dispose();
-          });
-        });
-      }
-      renderer.dispose();
-      renderer.domElement.remove();
-    };
-  }, []);
-
-  return (
-    <div className="hardware-model-viewer">
-      <div ref={mountRef} className="hardware-model-stage" role="img" aria-label="Interactive 3D model of the HIL-UMI hardware assembly" />
-      {loadState === 'loading' && (
-        <div className="model-status" role="status">
-          <span className="model-spinner" aria-hidden="true" />
-          <span>Loading 3D model{progress > 0 ? ` · ${progress}%` : ''}</span>
-        </div>
-      )}
-      {loadState === 'error' && (
-        <div className="model-status model-status-error" role="alert">
-          <span>3D preview unavailable.</span>
-          <a href={assetUrl('/assets/hardware.usdz')}>Open USDZ file</a>
-        </div>
-      )}
-      <div className={`model-toolbar ${loadState === 'ready' ? 'is-ready' : ''}`}>
-        <span>Drag to rotate · Scroll to zoom</span>
-        <button type="button" onClick={() => resetViewRef.current()}>Reset view</button>
-      </div>
-    </div>
   );
 }
 
@@ -462,18 +311,10 @@ function App() {
       <section className="section hardware-section" id="hardware">
         <div className="container">
           <SectionHeading kicker="HARDWARE" title="Portable collection. Real-time intelligence." description="A custom handheld UMI captures robot-compatible observations and actions at 30 Hz while local GPU inference powers both online detectors." />
-          <div className="hardware-showcase">
-            <figure className="media-panel hardware-figure reveal">
-              <div className="panel-topline"><span>HARDWARE STRUCTURE</span><span>REFERENCE DIAGRAM</span></div>
-              <img src={assetUrl('/assets/hardware.webp')} alt="Custom HIL-UMI hardware with Quest controller and headset, RealSense cameras, connector, and AgiBot OmniPicker" />
-              <figcaption>Annotated hardware structure and system components.</figcaption>
-            </figure>
-            <figure className="media-panel hardware-figure hardware-model-panel reveal">
-              <div className="panel-topline"><span>INTERACTIVE 3D MODEL</span><span>USDZ · 360° VIEW</span></div>
-              <HardwareModelViewer />
-              <figcaption>Explore the hardware assembly from any angle.</figcaption>
-            </figure>
-          </div>
+          <figure className="media-panel hardware-figure reveal">
+            <div className="panel-topline"><span>CUSTOM UMI DEVICE</span><span>ROBOT-FREE · 30 HZ</span></div>
+            <img src={assetUrl('/assets/hardware.webp')} alt="Custom HIL-UMI hardware with Quest controller and headset, RealSense cameras, connector, and AgiBot OmniPicker" />
+          </figure>
 
           <div className="hardware-list reveal">
             {hardware.map(([index, title, detail]) => (
