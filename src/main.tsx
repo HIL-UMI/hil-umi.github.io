@@ -305,14 +305,6 @@ function App() {
               </article>
             ))}
           </div>
-
-          <div className="equation-strip reveal">
-            <div><span className="formula">E<sub>S</sub>(A, H)</span><small>Distribution-aware Energy Score</small></div>
-            <span className="equation-arrow">→</span>
-            <div><span className="formula">E<sub>S</sub> &gt; τ<sub>P</sub></span><small>Policy weak · collect</small></div>
-            <span className="equation-arrow">→</span>
-            <div><span className="formula">L<sub>AWBC</sub>(θ)</span><small>Utility-aware policy update</small></div>
-          </div>
         </div>
       </section>
 
