@@ -153,6 +153,29 @@ function SectionHeading({ kicker, title, description, light = false }: { kicker:
 
 function App() {
   const [active, setActive] = useState('abstract');
+  const [copyStatus, setCopyStatus] = useState<'idle' | 'copied' | 'error'>('idle');
+
+  const copyBibtex = async () => {
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(bibtex);
+      } else {
+        const textArea = document.createElement('textarea');
+        textArea.value = bibtex;
+        textArea.style.position = 'fixed';
+        textArea.style.opacity = '0';
+        document.body.appendChild(textArea);
+        textArea.select();
+        const copied = document.execCommand('copy');
+        textArea.remove();
+        if (!copied) throw new Error('Copy command failed');
+      }
+      setCopyStatus('copied');
+    } catch {
+      setCopyStatus('error');
+    }
+    window.setTimeout(() => setCopyStatus('idle'), 2200);
+  };
 
   useEffect(() => {
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -377,7 +400,12 @@ function App() {
             <p className="citation-copy">For the latest version and citation metadata, see <a href={arxivUrl} target="_blank" rel="noreferrer">arXiv:2609.20659</a>.</p>
           </div>
           <div className="citation-card">
-            <div className="citation-card-top"><span>BIBTEX</span><span>ARXIV:2609.20659</span></div>
+            <div className="citation-card-top">
+              <span>BIBTEX · ARXIV:2609.20659</span>
+              <button className={`copy-button ${copyStatus}`} type="button" onClick={copyBibtex} aria-label="Copy BibTeX citation" aria-live="polite">
+                {copyStatus === 'copied' ? '✓ COPIED' : copyStatus === 'error' ? 'TRY AGAIN' : 'COPY'}
+              </button>
+            </div>
             <pre><code>{bibtex}</code></pre>
           </div>
         </div>
