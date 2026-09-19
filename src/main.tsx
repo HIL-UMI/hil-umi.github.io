@@ -9,7 +9,7 @@ const videoPlaybackRate = 2;
 
 const bibtex = `@article{han2026hilumi,
   title={HIL-UMI: Bringing Human-in-the-Loop Post-Training of Vision-Language-Action Models to Universal Manipulation Interface},
-  author={Han, Zimu and Zeng, Yiming and Zhang, Jiyao and Zhao, Zihao and Wang, Yuanfei and Jin, Yixiang and Li, Shiqi and Chen, Shuangben and Huang, Wei and Li, Ruodai and Shen, Hui and Dong, Hao},
+  author={Zimu Han and Yiming Zeng and Jiyao Zhang and Zihao Zhao and Yuanfei Wang and Yixiang Jin and Shiqi Li and Shuangben Chen and Wei Huang and Ruodai Li and Hui Shen and Hao Dong},
   journal={arXiv preprint arXiv:2609.20659},
   year={2026},
   eprint={2609.20659},
