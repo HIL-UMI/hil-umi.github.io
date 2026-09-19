@@ -122,6 +122,13 @@ const tasks = [
   },
 ];
 
+const frontViewDemos = [
+  { name: 'Fold Towel', src: '/videos/fold-towel-front-view.mp4', poster: '/assets/video-posters/fold-towel-front-view.webp' },
+  { name: 'Clean Up Table', src: '/videos/clean-up-table-front-view.mp4', poster: '/assets/video-posters/clean-up-table-front-view.webp' },
+  { name: 'Stack Cube', src: '/videos/stack-cube-front-view.mp4', poster: '/assets/video-posters/stack-cube-front-view.webp' },
+  { name: 'Stamp', src: '/videos/stamp-front-view.mp4', poster: '/assets/video-posters/stamp-front-view.webp' },
+];
+
 const hardware = [
   ['01', 'Meta Quest 3 Controller', 'Real-time 6-DoF handheld pose tracking'],
   ['02', 'Intel RealSense D405', 'Close-range wrist-view observations'],
@@ -474,6 +481,27 @@ function App() {
                   <span>{task.kind}</span>
                   <h3>{task.name}</h3>
                   <p>{task.text}</p>
+                </div>
+              </article>
+            ))}
+          </div>
+          <div className="front-demo-grid" aria-label="Front-view task demos">
+            {frontViewDemos.map((demo, index) => (
+              <article className="front-demo-card reveal" key={demo.name}>
+                <video
+                  src={assetUrl(demo.src)}
+                  poster={assetUrl(demo.poster)}
+                  muted
+                  autoPlay
+                  loop
+                  playsInline
+                  controls
+                  preload="metadata"
+                  aria-label={`${demo.name} front-view demo`}
+                />
+                <div className="front-demo-caption">
+                  <span>FRONT VIEW · DEMO 0{index + 1}</span>
+                  <h3>{demo.name}</h3>
                 </div>
               </article>
             ))}

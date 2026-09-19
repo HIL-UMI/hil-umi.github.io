@@ -175,6 +175,13 @@ blockquote { margin: 25px 0 32px; color: #162035; font-size: 24px; line-height: 
 .task-content > span { color: #298f96; font: 700 9px/1 ui-monospace, monospace; letter-spacing: .08em; text-transform: uppercase; }
 .task-content h3 { margin: 10px 0 9px; font-size: 25px; }
 
+.front-demo-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; margin-top: 28px; }
+.front-demo-card { overflow: hidden; border: 1px solid var(--line); border-radius: 22px; background: white; box-shadow: 0 14px 38px rgba(20,38,62,.05); }
+.front-demo-card video { display: block; width: 100%; aspect-ratio: 16 / 9; background: #07101d; object-fit: cover; }
+.front-demo-caption { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 20px 22px 22px; }
+.front-demo-caption span { color: #298f96; font: 700 9px/1 ui-monospace, monospace; letter-spacing: .1em; }
+.front-demo-caption h3 { margin: 0; font-size: 20px; letter-spacing: -.025em; }
+
 .results-section { overflow: hidden; background: #0b1220; color: white; }
 .results-grid-bg { position: absolute; inset: 0; opacity: .12; background-image: linear-gradient(rgba(255,255,255,.08) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.08) 1px, transparent 1px); background-size: 68px 68px; mask-image: linear-gradient(to bottom, black, transparent 72%); }
 .results-section .container { position: relative; }
@@ -251,7 +258,7 @@ footer { padding: 30px 0; border-top: 1px solid var(--line); background: #fff; }
   .abstract-layout, .citation-wrap { grid-template-columns: 1fr; gap: 34px; }
   .abstract-aside { position: relative; top: 0; }
   .abstract-copy .lead { font-size: 18px; }
-  .contribution-grid, .method-grid, .hardware-list, .task-grid, .results-metrics { grid-template-columns: 1fr; }
+  .contribution-grid, .method-grid, .hardware-list, .task-grid, .front-demo-grid, .results-metrics { grid-template-columns: 1fr; }
   .contribution-card { min-height: 270px; }
   .media-panel, .hardware-figure, .results-figure { padding: 10px; border-radius: 16px; }
   .panel-topline { padding: 4px 2px 12px; }
